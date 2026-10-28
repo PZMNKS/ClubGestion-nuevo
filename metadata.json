@@ -1,0 +1,6 @@
+{
+  "name": "Club Conecta Chile",
+  "description": "Plataforma de gestión comunitaria y deportiva para socios, jugadores y dirigentes.",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"],
+  "permissions": []
+}
