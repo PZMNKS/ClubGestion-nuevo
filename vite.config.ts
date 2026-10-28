@@ -11,8 +11,30 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    router: {
+      autoCodeSplitting: false,
+    },
   },
   nitro: {
     preset: "node-server",
+    rolldownConfig: {
+      checks: {
+        moduleLevelDirective: false,
+      },
+    },
+  },
+  vite: {
+    server: {
+      host: "0.0.0.0",
+      port: 3000,
+      allowedHosts: true,
+    },
+    build: {
+      rolldownOptions: {
+        checks: {
+          moduleLevelDirective: false,
+        },
+      },
+    },
   },
 });
