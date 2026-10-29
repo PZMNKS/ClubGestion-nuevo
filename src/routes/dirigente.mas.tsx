@@ -303,7 +303,7 @@ function AIHelper({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="mx-auto w-full max-w-[480px] rounded-t-3xl bg-card p-5 pb-8"
+        className="mx-auto w-full max-w-[30rem] rounded-t-3xl bg-card p-5 pb-8"
       >
         <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-border" />
         <div className="flex items-center justify-between">

@@ -23,6 +23,7 @@ import {
 import {
   AsistenciaListaSheet,
   EditarAsistenciaSheet,
+  OpcionesAsistenciaRow,
 } from "@/components/AsistenciaListaSheet";
 import {
   useAsistencias,
@@ -147,7 +148,7 @@ function EventosDirigente() {
         )}
       </div>
 
-      <div className="mt-4 inline-flex rounded-full bg-secondary p-1">
+      <div className="mt-4 inline-flex max-w-full overflow-x-auto rounded-full bg-secondary p-1">
         {(["eventos", "asistencia", "avisos"] as const).map((v) => (
           <Button
             variant="ghost"
@@ -771,28 +772,6 @@ function RegistrarAsistenciaSheet({ onClose }: { onClose: () => void }) {
   const lista = jugadores.filter(
     (j) => categoria === "Todos" || j.categoria === categoria,
   );
-  const opts: { k: EstadoAsistencia; l: string; on: string }[] = [
-    {
-      k: "presente",
-      l: "Asistió",
-      on: "bg-success text-success-foreground hover:bg-success hover:text-success-foreground",
-    },
-    {
-      k: "ausente",
-      l: "No asistió",
-      on: "bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground",
-    },
-    {
-      k: "lesionado",
-      l: "Lesionado",
-      on: "bg-orange-600 text-white hover:bg-orange-600 hover:text-white",
-    },
-    {
-      k: "sin-respuesta",
-      l: "Sin responder",
-      on: "bg-warning text-warning-foreground hover:bg-warning hover:text-warning-foreground",
-    },
-  ];
 
   const guardar = () => {
     const [y, m, d] = fecha.split("-");
@@ -870,21 +849,10 @@ function RegistrarAsistenciaSheet({ onClose }: { onClose: () => void }) {
             <div key={j.id} className="rounded-2xl bg-secondary p-3">
               <p className="text-sm font-semibold">{j.nombre}</p>
               <p className="text-xs text-muted-foreground">{j.categoria}</p>
-              <div className="mt-2 grid grid-cols-2 gap-1.5">
-                {opts.map((o) => (
-                  <Button
-                    variant="ghost"
-                    key={o.k}
-                    onClick={() => setReg((p) => ({ ...p, [j.id]: o.k }))}
-                    aria-pressed={cur === o.k}
-                    className={`rounded-xl px-2 py-1.5 text-xs font-bold transition ${
-                      cur === o.k ? o.on : "bg-card text-secondary-foreground"
-                    }`}
-                  >
-                    {o.l}
-                  </Button>
-                ))}
-              </div>
+              <OpcionesAsistenciaRow
+                value={cur}
+                onChange={(next) => setReg((p) => ({ ...p, [j.id]: next }))}
+              />
             </div>
           );
         })}

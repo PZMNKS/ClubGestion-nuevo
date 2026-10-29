@@ -47,7 +47,13 @@ export function DraggableBottomSheet({
   const endDrag = () => {
     startY.current = null;
     setDragging(false);
-    if (offsetRef.current > 88) {
+    const scale =
+      Number(
+        document.documentElement.style.getPropertyValue(
+          "--mobile-forced-scale",
+        ),
+      ) || 1;
+    if (offsetRef.current > 88 * scale) {
       onClose();
       return;
     }
@@ -66,7 +72,7 @@ export function DraggableBottomSheet({
         aria-modal="true"
         tabIndex={-1}
         onClick={(event) => event.stopPropagation()}
-        className={`mx-auto max-h-[85vh] w-full max-w-[480px] overflow-y-auto rounded-t-3xl bg-card p-5 pb-8 outline-none ${dragging ? "" : "transition-transform duration-200"}`}
+        className={`mx-auto max-h-[85vh] w-full max-w-[30rem] overflow-y-auto rounded-t-3xl bg-card p-5 pb-8 outline-none ${dragging ? "" : "transition-transform duration-200"}`}
         style={{ transform: `translateY(${offset}px)` }}
       >
         <Button

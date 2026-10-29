@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: calc(var(--radius) - 0.125rem);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-xl: calc(var(--radius) + 0.25rem);
+  --radius-2xl: calc(var(--radius) + 0.5rem);
+  --radius-3xl: calc(var(--radius) + 0.75rem);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -93,10 +93,15 @@
   }
   html,
   body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 }
 
@@ -121,7 +126,7 @@
   input,
   select,
   textarea {
-    min-height: 44px;
+    min-height: 2.75rem;
   }
   button:disabled {
     cursor: not-allowed;
@@ -130,49 +135,91 @@
 
 .flow-sheet {
   top: auto !important;
-  bottom: 88px;
-  left: 50% !important;
+  bottom: 5.5rem;
+  left: 0 !important;
+  right: 0 !important;
+  margin-inline: auto;
   transform: none !important;
-  translate: -50% 0 !important;
+  translate: none !important;
   --tw-translate-x: 0;
   --tw-translate-y: 0;
-  width: min(calc(100% - 16px), 464px);
-  max-height: calc(100dvh - 108px);
+  width: min(calc(100% - 1rem), 29rem);
+  max-height: calc(100dvh - 6.75rem);
   overflow-y: auto;
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
   animation: none !important;
 }
 .flow-actions {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 8px;
+  gap: 0.5rem;
   position: sticky;
-  bottom: -20px;
+  bottom: -1.25rem;
   background: var(--card);
-  padding: 12px 0;
+  padding: 0.75rem 0;
 }
 .field,
 .fld {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   background: var(--secondary);
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
 }
 .app-nav {
-  height: 80px;
+  height: 5rem;
 }
 /* Keep navigation available below legacy sheets as well. */
 div.fixed.inset-0:has(> div.rounded-t-3xl) {
-  bottom: 80px;
+  bottom: 5rem;
 }
 div.fixed.inset-0 > div.rounded-t-3xl {
-  max-height: calc(100dvh - 96px);
+  max-height: calc(100dvh - 6rem);
   overflow-y: auto;
 }
 div.fixed.inset-0 > div.rounded-t-3xl button {
-  min-height: 44px;
+  min-height: 2.75rem;
+}
+html[data-mobile-device="true"][data-mobile-orientation="portrait"]
+  .max-w-\[30rem\] {
+  max-width: 100% !important;
+}
+html[data-mobile-device="true"][data-mobile-orientation="portrait"]
+  .flow-sheet {
+  width: calc(100% - 1.25rem) !important;
+  max-width: calc(100% - 1.25rem) !important;
+}
+html[data-mobile-forced-viewport="true"] {
+  font-size: var(--mobile-root-font-size, 16px) !important;
+  --shadow-card:
+    0 calc(1px * var(--mobile-forced-scale, 1))
+      calc(2px * var(--mobile-forced-scale, 1)) oklch(0.5 0.05 260 / 0.05),
+    0 calc(4px * var(--mobile-forced-scale, 1))
+      calc(16px * var(--mobile-forced-scale, 1)) oklch(0.5 0.05 260 / 0.07);
+}
+html[data-mobile-forced-viewport="true"] .text-\[10px\] {
+  font-size: 0.625rem !important;
+}
+html[data-mobile-forced-viewport="true"] .text-\[11px\] {
+  font-size: 0.6875rem !important;
+}
+html[data-mobile-forced-viewport="true"] .border {
+  border-width: calc(1px * var(--mobile-forced-scale, 1));
+}
+html[data-mobile-forced-viewport="true"] .border-t {
+  border-top-width: calc(1px * var(--mobile-forced-scale, 1));
+}
+html[data-mobile-forced-viewport="true"] .border-b {
+  border-bottom-width: calc(1px * var(--mobile-forced-scale, 1));
+}
+html[data-mobile-forced-viewport="true"] [data-sonner-toaster] {
+  transform-origin: left top;
+  scale: var(--mobile-forced-scale, 1);
+}
+html[data-mobile-forced-viewport="true"]
+  [data-sonner-toaster][data-y-position="top"] {
+  top: 0.875rem !important;
 }
 [data-sonner-toast][data-front="false"] {
   opacity: 0 !important;

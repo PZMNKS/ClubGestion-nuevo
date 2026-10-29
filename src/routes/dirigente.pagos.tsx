@@ -72,7 +72,7 @@ function PagosDirigente() {
         Control de cuotas y aportes del club.
       </p>
 
-      <div className="mt-4 grid grid-cols-1 gap-2 min-[380px]:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-2 min-[23.75rem]:grid-cols-3">
         <Sum
           label="Ingresos registrados"
           value={fmt(totalIngresos)}
@@ -93,7 +93,7 @@ function PagosDirigente() {
         />
       </div>
 
-      <div className="mt-4 inline-flex rounded-full bg-secondary p-1">
+      <div className="mt-4 inline-flex max-w-full overflow-x-auto rounded-full bg-secondary p-1">
         {filtros.map((it) => (
           <Button
             variant="ghost"

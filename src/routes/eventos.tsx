@@ -32,7 +32,7 @@ function EventosPage() {
         Partidos, entrenamientos y actividades.
       </p>
 
-      <div className="mt-4 inline-flex rounded-full bg-secondary p-1">
+      <div className="mt-4 inline-flex max-w-full overflow-x-auto rounded-full bg-secondary p-1">
         {(["lista", "calendario"] as const).map((v) => (
           <Button
             variant="ghost"
@@ -84,7 +84,29 @@ function EventosPage() {
             </p>
           </div>
 
-          <p className="mt-5 text-sm font-semibold">Tu asistencia</p>
+          <div className="mt-5 flex items-baseline justify-between gap-2">
+            <p className="text-sm font-semibold">Tu asistencia</p>
+            <p
+              role="status"
+              className={`text-xs font-semibold ${
+                selected.status === "confirmado"
+                  ? "text-success"
+                  : selected.status === "no-asiste"
+                    ? "text-destructive"
+                    : selected.status === "lesionado"
+                      ? "text-orange-700"
+                      : "text-muted-foreground"
+              }`}
+            >
+              {selected.status === "confirmado"
+                ? "Confirmada"
+                : selected.status === "no-asiste"
+                  ? "No asistirás"
+                  : selected.status === "lesionado"
+                    ? "Baja por lesión"
+                    : "Sin confirmar"}
+            </p>
+          </div>
           <div className="mt-2">
             <AttendanceActions id={selected.id} status={selected.status} />
           </div>

@@ -127,7 +127,7 @@ function SociosPage() {
       </div>
 
       {/* Filtros estado de pago */}
-      <div className="mt-2 inline-flex rounded-full bg-secondary p-1">
+      <div className="mt-2 inline-flex max-w-full overflow-x-auto rounded-full bg-secondary p-1">
         {filtros.map((f) => (
           <Button
             variant="ghost"

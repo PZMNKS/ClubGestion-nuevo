@@ -73,7 +73,7 @@ function ClubPage() {
 
       <SectionTitle>Tabla de posiciones</SectionTitle>
       <div className="overflow-hidden rounded-2xl bg-card shadow-[var(--shadow-card)]">
-        <div className="grid grid-cols-[28px_1fr_40px_40px] gap-2 border-b border-border px-4 py-2 text-[11px] font-bold uppercase text-muted-foreground">
+        <div className="grid grid-cols-[1.75rem_1fr_2.5rem_2.5rem] gap-2 border-b border-border px-4 py-2 text-[11px] font-bold uppercase text-muted-foreground">
           <span>#</span>
           <span>Equipo</span>
           <span className="text-right">PJ</span>
@@ -84,7 +84,7 @@ function ClubPage() {
           return (
             <div
               key={s.pos}
-              className={`grid grid-cols-[28px_1fr_40px_40px] gap-2 px-4 py-2.5 text-sm ${
+              className={`grid grid-cols-[1.75rem_1fr_2.5rem_2.5rem] gap-2 px-4 py-2.5 text-sm ${
                 me ? "bg-primary-soft font-bold text-foreground" : ""
               }`}
             >

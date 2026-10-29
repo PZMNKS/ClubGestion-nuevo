@@ -32,28 +32,59 @@ const grupos: { key: EstadoAsistencia; label: string; cls: string }[] = [
   },
 ];
 
-const opcionesEstado: { k: EstadoAsistencia; l: string; on: string }[] = [
+const opcionesEstado: {
+  k: Exclude<EstadoAsistencia, "sin-respuesta">;
+  l: string;
+  on: string;
+}[] = [
   {
     k: "presente",
     l: "Asistió",
-    on: "bg-success text-success-foreground hover:bg-success hover:text-success-foreground",
+    on: "border-transparent bg-success text-success-foreground shadow-sm hover:bg-success hover:text-success-foreground",
   },
   {
     k: "ausente",
     l: "No asistió",
-    on: "bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground",
+    on: "border-transparent bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive hover:text-destructive-foreground",
   },
   {
     k: "lesionado",
     l: "Lesionado",
-    on: "bg-orange-600 text-white hover:bg-orange-600 hover:text-white",
-  },
-  {
-    k: "sin-respuesta",
-    l: "Sin responder",
-    on: "bg-warning text-warning-foreground hover:bg-warning hover:text-warning-foreground",
+    on: "border-transparent bg-orange-600 text-white shadow-sm hover:bg-orange-600 hover:text-white",
   },
 ];
+
+const idleEstadoCls =
+  "border-input bg-card text-foreground hover:bg-card hover:text-foreground [@media(hover:hover)]:hover:bg-secondary/70";
+
+export function OpcionesAsistenciaRow({
+  value,
+  onChange,
+}: {
+  value: EstadoAsistencia;
+  onChange: (next: EstadoAsistencia) => void;
+}) {
+  return (
+    <div className="mt-2.5 grid grid-cols-3 gap-1.5">
+      {opcionesEstado.map((o) => {
+        const selected = value === o.k;
+        return (
+          <Button
+            variant="ghost"
+            key={o.k}
+            onClick={() => onChange(selected ? "sin-respuesta" : o.k)}
+            aria-pressed={selected}
+            className={`rounded-xl border px-2 py-1.5 text-xs font-bold transition active:scale-[0.97] ${
+              selected ? o.on : idleEstadoCls
+            }`}
+          >
+            {o.l}
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function AsistenciaListaSheet({
   titulo,
@@ -210,21 +241,10 @@ export function EditarAsistenciaSheet({
                   <p className="text-xs text-muted-foreground">{j.categoria}</p>
                 </div>
               </div>
-              <div className="mt-2.5 grid grid-cols-2 gap-1.5">
-                {opcionesEstado.map((o) => (
-                  <Button
-                    variant="ghost"
-                    key={o.k}
-                    onClick={() => setReg((p) => ({ ...p, [j.id]: o.k }))}
-                    aria-pressed={cur === o.k}
-                    className={`rounded-xl px-2 py-1.5 text-xs font-bold transition ${
-                      cur === o.k ? o.on : "bg-card text-secondary-foreground"
-                    }`}
-                  >
-                    {o.l}
-                  </Button>
-                ))}
-              </div>
+              <OpcionesAsistenciaRow
+                value={cur}
+                onChange={(next) => setReg((p) => ({ ...p, [j.id]: next }))}
+              />
             </div>
           );
         })}

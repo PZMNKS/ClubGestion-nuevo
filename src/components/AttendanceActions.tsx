@@ -7,7 +7,7 @@ import type { EventStatus } from "@/lib/mock-data";
 const base =
   "rounded-xl border px-2 text-xs transition-all duration-150 active:scale-[0.97] active:shadow-none";
 const idle =
-  "border-input bg-card text-foreground shadow-card hover:bg-secondary";
+  "border-input bg-card text-foreground shadow-card hover:bg-card hover:text-foreground [@media(hover:hover)]:hover:bg-secondary";
 
 export function AttendanceActions({
   id,
@@ -16,14 +16,17 @@ export function AttendanceActions({
   id: string;
   status: EventStatus;
 }) {
-  function respond(next: EventStatus) {
+  function respond(selected: EventStatus) {
+    const next: EventStatus = status === selected ? "pendiente" : selected;
     setPlayerEventStatus(id, next);
     toast.success(
       next === "confirmado"
         ? "Asistencia confirmada"
         : next === "lesionado"
           ? "Registrado: baja por lesión"
-          : "Registrado: no vas a asistir",
+          : next === "no-asiste"
+            ? "Registrado: no vas a asistir"
+            : "Selección de asistencia quitada",
       {
         action: {
           label: "Deshacer",

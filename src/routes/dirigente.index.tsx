@@ -92,8 +92,8 @@ function DirigenteHome() {
         </div>
       </section>
 
-      <p className="mt-3 flex items-center gap-2 text-sm">
-        <CheckCircle2 className="h-4 w-4 text-success" />
+      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
         <span className="font-semibold text-success">
           {socios.filter((s) => s.pago === "al-dia").length} al día
         </span>

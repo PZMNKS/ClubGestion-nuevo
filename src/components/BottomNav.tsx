@@ -15,20 +15,20 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navegación de jugador"
-      className="app-nav fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-card/95 backdrop-blur"
+      className="app-nav fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[30rem] border-t border-border bg-card/95 backdrop-blur"
     >
-      <ul className="flex items-center justify-around px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2">
+      <ul className="grid grid-cols-5 items-center px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2">
         {items.map(({ to, label, icon: Icon }) => {
           const active =
             to === "/jugador"
               ? pathname === "/jugador"
               : pathname.startsWith(to);
           return (
-            <li key={to}>
+            <li key={to} className="min-w-0">
               <Link
                 to={to}
                 aria-current={active ? "page" : undefined}
-                className="flex w-16 flex-col items-center gap-1 text-[11px] font-medium"
+                className="flex w-full min-w-0 flex-col items-center gap-1 text-[11px] font-medium"
               >
                 <span
                   className={`flex h-10 w-12 items-center justify-center rounded-2xl transition-colors ${

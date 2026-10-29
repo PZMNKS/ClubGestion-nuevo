@@ -11,6 +11,7 @@ import {
   Phone,
   Calendar,
   CheckCircle2,
+  Clock,
   HeartPulse,
   XCircle,
   Wallet,
@@ -129,7 +130,9 @@ function SocioDetail() {
 
   const presentes = asistFiltradas.filter((a) => a.presente).length;
   const lesionados = asistFiltradas.filter((a) => a.lesionado).length;
-  const ausentes = asistFiltradas.length - presentes - lesionados;
+  const sinRespuesta = asistFiltradas.filter((a) => a.sinRespuesta).length;
+  const ausentes =
+    asistFiltradas.length - presentes - lesionados - sinRespuesta;
 
   return (
     <DirigenteShell>
@@ -313,14 +316,18 @@ function SocioDetail() {
             >
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                  a.presente
-                    ? "bg-success-soft text-success"
-                    : a.lesionado
-                      ? "bg-orange-100 text-orange-800"
-                      : "bg-destructive/10 text-destructive"
+                  a.sinRespuesta
+                    ? "bg-warning-soft text-warning-foreground"
+                    : a.presente
+                      ? "bg-success-soft text-success"
+                      : a.lesionado
+                        ? "bg-orange-100 text-orange-800"
+                        : "bg-destructive/10 text-destructive"
                 }`}
               >
-                {a.presente ? (
+                {a.sinRespuesta ? (
+                  <Clock className="h-5 w-5" />
+                ) : a.presente ? (
                   <CheckCircle2 className="h-5 w-5" />
                 ) : a.lesionado ? (
                   <HeartPulse className="h-5 w-5" />
@@ -337,11 +344,13 @@ function SocioDetail() {
               </div>
               <p
                 className={`text-xs font-bold ${
-                  a.presente
-                    ? "text-success"
-                    : a.lesionado
-                      ? "text-orange-700"
-                      : "text-destructive"
+                  a.sinRespuesta
+                    ? "text-warning-foreground"
+                    : a.presente
+                      ? "text-success"
+                      : a.lesionado
+                        ? "text-orange-700"
+                        : "text-destructive"
                 }`}
               >
                 {a.sinRespuesta

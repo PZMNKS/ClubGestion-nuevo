@@ -5,7 +5,7 @@ import { BottomNav } from "./BottomNav";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-[30rem] flex-col bg-background">
       <header className="sticky top-0 z-30 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 bg-background/90 px-5 pb-2 pt-3 backdrop-blur">
         <Link
           to="/jugador"

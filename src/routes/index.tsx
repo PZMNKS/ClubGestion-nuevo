@@ -1,10 +1,11 @@
 import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
 import { AlertTriangle, ChevronRight, Megaphone, Pin } from "lucide-react";
 import { AppShell, SectionTitle } from "@/components/AppShell";
+import { AttendanceActions } from "@/components/AttendanceActions";
 import { EventCard } from "@/components/EventCard";
-import { club, player, events, payments, announcements } from "@/lib/mock-data";
+import { usePrototype } from "@/lib/prototype-state";
+import { club, player, announcements } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const [evts, setEvts] = useState(events);
+  const { events: evts, payments } = usePrototype();
   const upcoming = [...evts].slice(0, 2);
   const pending = payments.filter((p) => p.status === "pendiente");
   const pinned = announcements.filter((a) => a.pinned);
@@ -150,47 +151,22 @@ function Home() {
       </div>
 
       {/* Quick confirm */}
-      <SectionTitle>Confirma tu asistencia</SectionTitle>
-      <div className="rounded-2xl bg-card p-4 shadow-[var(--shadow-card)]">
-        <p className="font-semibold">{upcoming[0]?.title}</p>
-        <p className="text-sm text-muted-foreground">
-          {upcoming[0]?.monthLabel} {upcoming[0]?.dayLabel} ·{" "}
-          {upcoming[0]?.time}
-        </p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {(["confirmado", "no-asiste", "lesionado", "pendiente"] as const).map(
-            (s) => (
-              <button
-                key={s}
-                onClick={() =>
-                  setEvts((prev) =>
-                    prev.map((e, i) => (i === 0 ? { ...e, status: s } : e)),
-                  )
-                }
-                className={`rounded-xl px-2 py-2 text-xs font-semibold transition ${
-                  evts[0]?.status === s
-                    ? s === "confirmado"
-                      ? "bg-success text-success-foreground"
-                      : s === "no-asiste"
-                        ? "bg-destructive text-destructive-foreground"
-                        : s === "lesionado"
-                          ? "bg-orange-600 text-white"
-                          : "bg-warning text-warning-foreground"
-                    : "bg-secondary text-secondary-foreground"
-                }`}
-              >
-                {s === "confirmado"
-                  ? "Asistiré"
-                  : s === "no-asiste"
-                    ? "No asisto"
-                    : s === "lesionado"
-                      ? "Lesionado"
-                      : "Pendiente"}
-              </button>
-            ),
-          )}
-        </div>
-      </div>
+      {upcoming[0] && (
+        <>
+          <SectionTitle>Confirma tu asistencia</SectionTitle>
+          <div className="rounded-2xl bg-card p-4 shadow-[var(--shadow-card)]">
+            <p className="font-semibold">{upcoming[0].title}</p>
+            <p className="mb-3 text-sm text-muted-foreground">
+              {upcoming[0].monthLabel} {upcoming[0].dayLabel} ·{" "}
+              {upcoming[0].time}
+            </p>
+            <AttendanceActions
+              id={upcoming[0].id}
+              status={upcoming[0].status}
+            />
+          </div>
+        </>
+      )}
     </AppShell>
   );
 }
