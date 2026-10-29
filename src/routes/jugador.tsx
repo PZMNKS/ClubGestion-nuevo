@@ -156,13 +156,23 @@ function Home() {
           </p>
           <p
             role="status"
-            className={`my-2 text-xs font-semibold ${next.status === "confirmado" ? "text-success" : next.status === "no-asiste" ? "text-destructive" : "text-muted-foreground"}`}
+            className={`my-2 text-xs font-semibold ${
+              next.status === "confirmado"
+                ? "text-success"
+                : next.status === "no-asiste"
+                  ? "text-destructive"
+                  : next.status === "lesionado"
+                    ? "text-orange-700"
+                    : "text-muted-foreground"
+            }`}
           >
             {next.status === "confirmado"
               ? "Confirmaste que vas"
               : next.status === "no-asiste"
                 ? "Confirmaste que no vas"
-                : "Tu asistencia está sin confirmar"}
+                : next.status === "lesionado"
+                  ? "Reportaste baja por lesión"
+                  : "Tu asistencia está sin confirmar"}
           </p>
           <AttendanceActions id={next.id} status={next.status} />
         </section>

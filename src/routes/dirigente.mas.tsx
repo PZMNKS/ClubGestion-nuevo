@@ -7,34 +7,26 @@ import {
   getPrototype,
   updatePrototype,
 } from "@/lib/prototype-state";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   FileText,
-  Megaphone,
-  Plus,
   Sparkles,
   Upload,
   AlertTriangle,
   CheckCircle2,
   Clock,
   X,
-  Send,
 } from "lucide-react";
 import { DirigenteShell, DSectionTitle } from "@/components/DirigenteShell";
-import {
-  documentos as initialDocs,
-  avisos as initialAvisos,
-  type Documento,
-  type AvisoDirigente,
-} from "@/lib/dirigente-data";
+import { type Documento } from "@/lib/dirigente-data";
 
 export const Route = createFileRoute("/dirigente/mas")({
   head: () =>
     pageHead(
       "Administración de Mi Club",
-      "Estado financiero global, documentación legal y avisos segmentados.",
+      "Estado financiero global y documentación legal del club.",
     ),
   validateSearch: (
     s: Record<string, unknown>,
@@ -45,28 +37,25 @@ export const Route = createFileRoute("/dirigente/mas")({
   component: MasPage,
 });
 
-const tabs = ["Resumen", "Documentos", "Avisos"] as const;
+const tabs = ["Resumen", "Documentos"] as const;
 
 function MasPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const initialTab: (typeof tabs)[number] =
-    search.tab === "comunicacion"
-      ? "Avisos"
-      : search.tab === "documentos"
-        ? "Documentos"
-        : "Resumen";
+    search.tab === "documentos" ? "Documentos" : "Resumen";
   const [tab, setTab] = useState<(typeof tabs)[number]>(initialTab);
-  const [openNewAviso, setOpenNewAviso] = useState(
-    search.tab === "comunicacion" && !!search.new,
-  );
 
   useEffect(() => {
-    if (search.tab === "documentos") setTab("Documentos");
-    if (search.tab === "comunicacion") {
-      setTab("Avisos");
-      if (search.new) setOpenNewAviso(true);
+    if (search.tab === "comunicacion" || search.tab === "avisos") {
+      navigate({
+        to: "/dirigente/eventos",
+        search: { tab: "avisos", ...(search.new ? { new: 1 } : {}) },
+        replace: true,
+      });
+      return;
     }
+    if (search.tab === "documentos") setTab("Documentos");
     if (search.tab || search.new) {
       navigate({ search: {}, replace: true });
     }
@@ -76,7 +65,7 @@ function MasPage() {
     <DirigenteShell>
       <h1 className="text-2xl font-extrabold">Mi Club</h1>
       <p className="text-sm text-muted-foreground">
-        Administración, documentación legal y avisos.
+        Administración financiera y documentación legal.
       </p>
 
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
@@ -99,12 +88,6 @@ function MasPage() {
 
       {tab === "Resumen" && <AdminResumen />}
       {tab === "Documentos" && <DocumentosTab />}
-      {tab === "Avisos" && (
-        <ComunicacionTab
-          openNew={openNewAviso}
-          onConsumeOpenNew={() => setOpenNewAviso(false)}
-        />
-      )}
     </DirigenteShell>
   );
 }
@@ -376,160 +359,6 @@ function AIHelper({ onClose }: { onClose: () => void }) {
         )}
       </div>
     </div>
-  );
-}
-
-/* ---------------- Comunicación ---------------- */
-
-function ComunicacionTab({
-  openNew = false,
-  onConsumeOpenNew,
-}: {
-  openNew?: boolean;
-  onConsumeOpenNew?: () => void;
-}) {
-  const { avisos } = usePrototype();
-  const setAvisos = (fn: (items: AvisoDirigente[]) => AvisoDirigente[]) =>
-    updatePrototype({ avisos: fn(getPrototype().avisos) });
-  const [show, setShow] = useState(openNew);
-
-  useEffect(() => {
-    if (openNew) {
-      setShow(true);
-      onConsumeOpenNew?.();
-    }
-  }, [openNew, onConsumeOpenNew]);
-
-  return (
-    <>
-      <div className="mt-5 flex items-center justify-between">
-        <p className="text-sm font-semibold text-muted-foreground">
-          {avisos.length} avisos publicados
-        </p>
-        <Button
-          onClick={() => setShow(true)}
-          className="flex items-center gap-1 px-3 font-bold"
-        >
-          <Plus className="h-3.5 w-3.5" /> Nuevo
-        </Button>
-      </div>
-
-      <div className="mt-3 space-y-3">
-        {avisos.map((a) => (
-          <article
-            key={a.id}
-            className="rounded-2xl bg-card p-4 shadow-[var(--shadow-card)]"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <Megaphone className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{a.titulo}</p>
-                <p className="text-xs text-muted-foreground">
-                  {a.autor} · {a.fecha}
-                </p>
-              </div>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-secondary-foreground">
-                {a.destinatarios}
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">{a.cuerpo}</p>
-          </article>
-        ))}
-      </div>
-
-      {show && (
-        <NewAvisoSheet
-          onClose={() => setShow(false)}
-          onSave={(a) => {
-            setAvisos((p) => [a, ...p]);
-            toast.success("Aviso publicado en esta sesión");
-            setShow(false);
-          }}
-        />
-      )}
-    </>
-  );
-}
-
-function NewAvisoSheet({
-  onClose,
-  onSave,
-}: {
-  onClose: () => void;
-  onSave: (a: AvisoDirigente) => void;
-}) {
-  const [titulo, setTitulo] = useState("");
-  const [cuerpo, setCuerpo] = useState("");
-  const [destinatarios, setDestinatarios] = useState("Todos");
-
-  return (
-    <FlowSheet title="Nuevo aviso" onClose={onClose}>
-      <div className="mt-4 space-y-3">
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
-            Título
-          </span>
-          <input
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
-            placeholder="Ej: Convocatoria sábado"
-          />
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
-            Destinatarios
-          </span>
-          <select
-            value={destinatarios}
-            onChange={(e) => setDestinatarios(e.target.value)}
-            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
-          >
-            <option>Todos</option>
-            <option>Primera Adulta</option>
-            <option>Femenino Adulto</option>
-            <option>Sub-17</option>
-            <option>Socios</option>
-            <option>Directiva</option>
-          </select>
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
-            Mensaje
-          </span>
-          <textarea
-            value={cuerpo}
-            onChange={(e) => setCuerpo(e.target.value)}
-            rows={4}
-            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
-            placeholder="Escribe el mensaje..."
-          />
-        </label>
-      </div>
-      <div className="flow-actions">
-        <Button variant="secondary" className="w-full" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button
-          disabled={!titulo.trim() || !cuerpo.trim()}
-          onClick={() =>
-            onSave({
-              id: `av${Date.now()}`,
-              titulo,
-              cuerpo,
-              destinatarios,
-              fecha: "ahora",
-              autor: "Tú",
-            })
-          }
-          className="w-full text-sm font-bold disabled:opacity-50"
-        >
-          Publicar aviso
-        </Button>
-      </div>
-    </FlowSheet>
   );
 }
 

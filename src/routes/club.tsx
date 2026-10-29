@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { usePrototype, getPrototype } from "@/lib/prototype-state";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { pageHead } from "@/lib/page-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SectionTitle } from "@/components/AppShell";

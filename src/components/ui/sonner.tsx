@@ -2,9 +2,10 @@ import { Toaster as Sonner } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ visibleToasts = 1, ...props }: ToasterProps) => {
   return (
     <Sonner
+      visibleToasts={visibleToasts}
       className="toaster group"
       toastOptions={{
         classNames: {

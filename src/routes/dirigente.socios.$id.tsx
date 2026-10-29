@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { usePrototype } from "@/lib/prototype-state";
 import { useAsistencias } from "@/lib/dirigente-data";
 import { pageHead } from "@/lib/page-head";
@@ -11,6 +11,7 @@ import {
   Phone,
   Calendar,
   CheckCircle2,
+  HeartPulse,
   XCircle,
   Wallet,
 } from "lucide-react";
@@ -92,6 +93,7 @@ function SocioDetail() {
         .map((a) => ({
           ...a,
           presente: a.registros[s.id] === "presente",
+          lesionado: a.registros[s.id] === "lesionado",
           sinRespuesta: a.registros[s.id] === "sin-respuesta",
         })),
     [sesiones, s.id],
@@ -126,6 +128,8 @@ function SocioDetail() {
   );
 
   const presentes = asistFiltradas.filter((a) => a.presente).length;
+  const lesionados = asistFiltradas.filter((a) => a.lesionado).length;
+  const ausentes = asistFiltradas.length - presentes - lesionados;
 
   return (
     <DirigenteShell>
@@ -194,7 +198,7 @@ function SocioDetail() {
           Editar datos
         </Button>
         <Button asChild variant="secondary">
-          <Link to="/dirigente/mas" search={{ tab: "comunicacion", new: 1 }}>
+          <Link to="/dirigente/eventos" search={{ tab: "avisos", new: 1 }}>
             Publicar aviso
           </Link>
         </Button>
@@ -280,7 +284,7 @@ function SocioDetail() {
           onChange={setFiltroEvento}
         />
       </div>
-      <div className="mt-2 mb-3 flex gap-2 text-[11px] font-semibold">
+      <div className="mt-2 mb-3 flex flex-wrap gap-2 text-[11px] font-semibold">
         <span className="rounded-full bg-secondary px-2 py-1">
           {asistFiltradas.length} sesión(es)
         </span>
@@ -288,8 +292,13 @@ function SocioDetail() {
           {presentes} presente(s)
         </span>
         <span className="rounded-full bg-destructive/10 px-2 py-1 text-destructive">
-          {asistFiltradas.length - presentes} ausente(s)
+          {ausentes} ausente(s)
         </span>
+        {lesionados > 0 && (
+          <span className="rounded-full bg-orange-100 px-2 py-1 text-orange-800">
+            {lesionados} lesionado(s)
+          </span>
+        )}
       </div>
       {asistFiltradas.length === 0 ? (
         <p className="rounded-2xl bg-secondary p-4 text-center text-sm text-muted-foreground">
@@ -306,11 +315,15 @@ function SocioDetail() {
                 className={`flex h-10 w-10 items-center justify-center rounded-xl ${
                   a.presente
                     ? "bg-success-soft text-success"
-                    : "bg-destructive/10 text-destructive"
+                    : a.lesionado
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-destructive/10 text-destructive"
                 }`}
               >
                 {a.presente ? (
                   <CheckCircle2 className="h-5 w-5" />
+                ) : a.lesionado ? (
+                  <HeartPulse className="h-5 w-5" />
                 ) : (
                   <XCircle className="h-5 w-5" />
                 )}
@@ -324,14 +337,20 @@ function SocioDetail() {
               </div>
               <p
                 className={`text-xs font-bold ${
-                  a.presente ? "text-success" : "text-destructive"
+                  a.presente
+                    ? "text-success"
+                    : a.lesionado
+                      ? "text-orange-700"
+                      : "text-destructive"
                 }`}
               >
                 {a.sinRespuesta
                   ? "Sin responder"
                   : a.presente
                     ? "Presente"
-                    : "Ausente"}
+                    : a.lesionado
+                      ? "Lesionado"
+                      : "Ausente"}
               </p>
             </div>
           ))}

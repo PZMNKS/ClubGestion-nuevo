@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { pageHead } from "@/lib/page-head";
 import { FlowSheet } from "@/components/FlowSheet";
 import { Button } from "@/components/ui/button";

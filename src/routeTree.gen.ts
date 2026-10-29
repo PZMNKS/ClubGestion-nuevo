@@ -8,342 +8,342 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as AvisosRouteImport } from "./routes/avisos";
-import { Route as ClubRouteImport } from "./routes/club";
-import { Route as DirigenteRouteImport } from "./routes/dirigente";
-import { Route as EventosRouteImport } from "./routes/eventos";
-import { Route as JugadorRouteImport } from "./routes/jugador";
-import { Route as PagosRouteImport } from "./routes/pagos";
-import { Route as PerfilRouteImport } from "./routes/perfil";
-import { Route as DirigenteIndexRouteImport } from "./routes/dirigente.index";
-import { Route as DirigenteEventosRouteImport } from "./routes/dirigente.eventos";
-import { Route as DirigenteMasRouteImport } from "./routes/dirigente.mas";
-import { Route as DirigentePagosRouteImport } from "./routes/dirigente.pagos";
-import { Route as DirigenteSociosRouteImport } from "./routes/dirigente.socios";
-import { Route as DirigenteSociosIndexRouteImport } from "./routes/dirigente.socios.index";
-import { Route as DirigenteSociosIdRouteImport } from "./routes/dirigente.socios.$id";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AvisosRouteImport } from './routes/avisos'
+import { Route as ClubRouteImport } from './routes/club'
+import { Route as DirigenteRouteImport } from './routes/dirigente'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as JugadorRouteImport } from './routes/jugador'
+import { Route as PagosRouteImport } from './routes/pagos'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as DirigenteIndexRouteImport } from './routes/dirigente.index'
+import { Route as DirigenteEventosRouteImport } from './routes/dirigente.eventos'
+import { Route as DirigenteMasRouteImport } from './routes/dirigente.mas'
+import { Route as DirigentePagosRouteImport } from './routes/dirigente.pagos'
+import { Route as DirigenteSociosRouteImport } from './routes/dirigente.socios'
+import { Route as DirigenteSociosIndexRouteImport } from './routes/dirigente.socios.index'
+import { Route as DirigenteSociosIdRouteImport } from './routes/dirigente.socios.$id'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AvisosRoute = AvisosRouteImport.update({
-  id: "/avisos",
-  path: "/avisos",
+  id: '/avisos',
+  path: '/avisos',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ClubRoute = ClubRouteImport.update({
-  id: "/club",
-  path: "/club",
+  id: '/club',
+  path: '/club',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DirigenteRoute = DirigenteRouteImport.update({
-  id: "/dirigente",
-  path: "/dirigente",
+  id: '/dirigente',
+  path: '/dirigente',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const EventosRoute = EventosRouteImport.update({
-  id: "/eventos",
-  path: "/eventos",
+  id: '/eventos',
+  path: '/eventos',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const JugadorRoute = JugadorRouteImport.update({
-  id: "/jugador",
-  path: "/jugador",
+  id: '/jugador',
+  path: '/jugador',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PagosRoute = PagosRouteImport.update({
-  id: "/pagos",
-  path: "/pagos",
+  id: '/pagos',
+  path: '/pagos',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PerfilRoute = PerfilRouteImport.update({
-  id: "/perfil",
-  path: "/perfil",
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DirigenteIndexRoute = DirigenteIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => DirigenteRoute,
-} as any);
+} as any)
 const DirigenteEventosRoute = DirigenteEventosRouteImport.update({
-  id: "/eventos",
-  path: "/eventos",
+  id: '/eventos',
+  path: '/eventos',
   getParentRoute: () => DirigenteRoute,
-} as any);
+} as any)
 const DirigenteMasRoute = DirigenteMasRouteImport.update({
-  id: "/mas",
-  path: "/mas",
+  id: '/mas',
+  path: '/mas',
   getParentRoute: () => DirigenteRoute,
-} as any);
+} as any)
 const DirigentePagosRoute = DirigentePagosRouteImport.update({
-  id: "/pagos",
-  path: "/pagos",
+  id: '/pagos',
+  path: '/pagos',
   getParentRoute: () => DirigenteRoute,
-} as any);
+} as any)
 const DirigenteSociosRoute = DirigenteSociosRouteImport.update({
-  id: "/socios",
-  path: "/socios",
+  id: '/socios',
+  path: '/socios',
   getParentRoute: () => DirigenteRoute,
-} as any);
+} as any)
 const DirigenteSociosIndexRoute = DirigenteSociosIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => DirigenteSociosRoute,
-} as any);
+} as any)
 const DirigenteSociosIdRoute = DirigenteSociosIdRouteImport.update({
-  id: "/$id",
-  path: "/$id",
+  id: '/$id',
+  path: '/$id',
   getParentRoute: () => DirigenteSociosRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/avisos": typeof AvisosRoute;
-  "/club": typeof ClubRoute;
-  "/dirigente": typeof DirigenteRouteWithChildren;
-  "/eventos": typeof EventosRoute;
-  "/jugador": typeof JugadorRoute;
-  "/pagos": typeof PagosRoute;
-  "/perfil": typeof PerfilRoute;
-  "/dirigente/eventos": typeof DirigenteEventosRoute;
-  "/dirigente/mas": typeof DirigenteMasRoute;
-  "/dirigente/pagos": typeof DirigentePagosRoute;
-  "/dirigente/socios": typeof DirigenteSociosRouteWithChildren;
-  "/dirigente/": typeof DirigenteIndexRoute;
-  "/dirigente/socios/$id": typeof DirigenteSociosIdRoute;
-  "/dirigente/socios/": typeof DirigenteSociosIndexRoute;
+  '/': typeof IndexRoute
+  '/avisos': typeof AvisosRoute
+  '/club': typeof ClubRoute
+  '/dirigente': typeof DirigenteRouteWithChildren
+  '/eventos': typeof EventosRoute
+  '/jugador': typeof JugadorRoute
+  '/pagos': typeof PagosRoute
+  '/perfil': typeof PerfilRoute
+  '/dirigente/eventos': typeof DirigenteEventosRoute
+  '/dirigente/mas': typeof DirigenteMasRoute
+  '/dirigente/pagos': typeof DirigentePagosRoute
+  '/dirigente/socios': typeof DirigenteSociosRouteWithChildren
+  '/dirigente/': typeof DirigenteIndexRoute
+  '/dirigente/socios/$id': typeof DirigenteSociosIdRoute
+  '/dirigente/socios/': typeof DirigenteSociosIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/avisos": typeof AvisosRoute;
-  "/club": typeof ClubRoute;
-  "/eventos": typeof EventosRoute;
-  "/jugador": typeof JugadorRoute;
-  "/pagos": typeof PagosRoute;
-  "/perfil": typeof PerfilRoute;
-  "/dirigente/eventos": typeof DirigenteEventosRoute;
-  "/dirigente/mas": typeof DirigenteMasRoute;
-  "/dirigente/pagos": typeof DirigentePagosRoute;
-  "/dirigente": typeof DirigenteIndexRoute;
-  "/dirigente/socios/$id": typeof DirigenteSociosIdRoute;
-  "/dirigente/socios": typeof DirigenteSociosIndexRoute;
+  '/': typeof IndexRoute
+  '/avisos': typeof AvisosRoute
+  '/club': typeof ClubRoute
+  '/eventos': typeof EventosRoute
+  '/jugador': typeof JugadorRoute
+  '/pagos': typeof PagosRoute
+  '/perfil': typeof PerfilRoute
+  '/dirigente/eventos': typeof DirigenteEventosRoute
+  '/dirigente/mas': typeof DirigenteMasRoute
+  '/dirigente/pagos': typeof DirigentePagosRoute
+  '/dirigente': typeof DirigenteIndexRoute
+  '/dirigente/socios/$id': typeof DirigenteSociosIdRoute
+  '/dirigente/socios': typeof DirigenteSociosIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/avisos": typeof AvisosRoute;
-  "/club": typeof ClubRoute;
-  "/dirigente": typeof DirigenteRouteWithChildren;
-  "/eventos": typeof EventosRoute;
-  "/jugador": typeof JugadorRoute;
-  "/pagos": typeof PagosRoute;
-  "/perfil": typeof PerfilRoute;
-  "/dirigente/eventos": typeof DirigenteEventosRoute;
-  "/dirigente/mas": typeof DirigenteMasRoute;
-  "/dirigente/pagos": typeof DirigentePagosRoute;
-  "/dirigente/socios": typeof DirigenteSociosRouteWithChildren;
-  "/dirigente/": typeof DirigenteIndexRoute;
-  "/dirigente/socios/$id": typeof DirigenteSociosIdRoute;
-  "/dirigente/socios/": typeof DirigenteSociosIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/avisos': typeof AvisosRoute
+  '/club': typeof ClubRoute
+  '/dirigente': typeof DirigenteRouteWithChildren
+  '/eventos': typeof EventosRoute
+  '/jugador': typeof JugadorRoute
+  '/pagos': typeof PagosRoute
+  '/perfil': typeof PerfilRoute
+  '/dirigente/eventos': typeof DirigenteEventosRoute
+  '/dirigente/mas': typeof DirigenteMasRoute
+  '/dirigente/pagos': typeof DirigentePagosRoute
+  '/dirigente/socios': typeof DirigenteSociosRouteWithChildren
+  '/dirigente/': typeof DirigenteIndexRoute
+  '/dirigente/socios/$id': typeof DirigenteSociosIdRoute
+  '/dirigente/socios/': typeof DirigenteSociosIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/avisos"
-    | "/club"
-    | "/dirigente"
-    | "/eventos"
-    | "/jugador"
-    | "/pagos"
-    | "/perfil"
-    | "/dirigente/eventos"
-    | "/dirigente/mas"
-    | "/dirigente/pagos"
-    | "/dirigente/socios"
-    | "/dirigente/"
-    | "/dirigente/socios/$id"
-    | "/dirigente/socios/";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/avisos'
+    | '/club'
+    | '/dirigente'
+    | '/eventos'
+    | '/jugador'
+    | '/pagos'
+    | '/perfil'
+    | '/dirigente/eventos'
+    | '/dirigente/mas'
+    | '/dirigente/pagos'
+    | '/dirigente/socios'
+    | '/dirigente/'
+    | '/dirigente/socios/$id'
+    | '/dirigente/socios/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/avisos"
-    | "/club"
-    | "/eventos"
-    | "/jugador"
-    | "/pagos"
-    | "/perfil"
-    | "/dirigente/eventos"
-    | "/dirigente/mas"
-    | "/dirigente/pagos"
-    | "/dirigente"
-    | "/dirigente/socios/$id"
-    | "/dirigente/socios";
+    | '/'
+    | '/avisos'
+    | '/club'
+    | '/eventos'
+    | '/jugador'
+    | '/pagos'
+    | '/perfil'
+    | '/dirigente/eventos'
+    | '/dirigente/mas'
+    | '/dirigente/pagos'
+    | '/dirigente'
+    | '/dirigente/socios/$id'
+    | '/dirigente/socios'
   id:
-    | "__root__"
-    | "/"
-    | "/avisos"
-    | "/club"
-    | "/dirigente"
-    | "/eventos"
-    | "/jugador"
-    | "/pagos"
-    | "/perfil"
-    | "/dirigente/eventos"
-    | "/dirigente/mas"
-    | "/dirigente/pagos"
-    | "/dirigente/socios"
-    | "/dirigente/"
-    | "/dirigente/socios/$id"
-    | "/dirigente/socios/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/avisos'
+    | '/club'
+    | '/dirigente'
+    | '/eventos'
+    | '/jugador'
+    | '/pagos'
+    | '/perfil'
+    | '/dirigente/eventos'
+    | '/dirigente/mas'
+    | '/dirigente/pagos'
+    | '/dirigente/socios'
+    | '/dirigente/'
+    | '/dirigente/socios/$id'
+    | '/dirigente/socios/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AvisosRoute: typeof AvisosRoute;
-  ClubRoute: typeof ClubRoute;
-  DirigenteRoute: typeof DirigenteRouteWithChildren;
-  EventosRoute: typeof EventosRoute;
-  JugadorRoute: typeof JugadorRoute;
-  PagosRoute: typeof PagosRoute;
-  PerfilRoute: typeof PerfilRoute;
+  IndexRoute: typeof IndexRoute
+  AvisosRoute: typeof AvisosRoute
+  ClubRoute: typeof ClubRoute
+  DirigenteRoute: typeof DirigenteRouteWithChildren
+  EventosRoute: typeof EventosRoute
+  JugadorRoute: typeof JugadorRoute
+  PagosRoute: typeof PagosRoute
+  PerfilRoute: typeof PerfilRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/avisos": {
-      id: "/avisos";
-      path: "/avisos";
-      fullPath: "/avisos";
-      preLoaderRoute: typeof AvisosRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/club": {
-      id: "/club";
-      path: "/club";
-      fullPath: "/club";
-      preLoaderRoute: typeof ClubRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/dirigente": {
-      id: "/dirigente";
-      path: "/dirigente";
-      fullPath: "/dirigente";
-      preLoaderRoute: typeof DirigenteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/eventos": {
-      id: "/eventos";
-      path: "/eventos";
-      fullPath: "/eventos";
-      preLoaderRoute: typeof EventosRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/jugador": {
-      id: "/jugador";
-      path: "/jugador";
-      fullPath: "/jugador";
-      preLoaderRoute: typeof JugadorRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/pagos": {
-      id: "/pagos";
-      path: "/pagos";
-      fullPath: "/pagos";
-      preLoaderRoute: typeof PagosRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/perfil": {
-      id: "/perfil";
-      path: "/perfil";
-      fullPath: "/perfil";
-      preLoaderRoute: typeof PerfilRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/dirigente/": {
-      id: "/dirigente/";
-      path: "/";
-      fullPath: "/dirigente/";
-      preLoaderRoute: typeof DirigenteIndexRouteImport;
-      parentRoute: typeof DirigenteRoute;
-    };
-    "/dirigente/eventos": {
-      id: "/dirigente/eventos";
-      path: "/eventos";
-      fullPath: "/dirigente/eventos";
-      preLoaderRoute: typeof DirigenteEventosRouteImport;
-      parentRoute: typeof DirigenteRoute;
-    };
-    "/dirigente/mas": {
-      id: "/dirigente/mas";
-      path: "/mas";
-      fullPath: "/dirigente/mas";
-      preLoaderRoute: typeof DirigenteMasRouteImport;
-      parentRoute: typeof DirigenteRoute;
-    };
-    "/dirigente/pagos": {
-      id: "/dirigente/pagos";
-      path: "/pagos";
-      fullPath: "/dirigente/pagos";
-      preLoaderRoute: typeof DirigentePagosRouteImport;
-      parentRoute: typeof DirigenteRoute;
-    };
-    "/dirigente/socios": {
-      id: "/dirigente/socios";
-      path: "/socios";
-      fullPath: "/dirigente/socios";
-      preLoaderRoute: typeof DirigenteSociosRouteImport;
-      parentRoute: typeof DirigenteRoute;
-    };
-    "/dirigente/socios/": {
-      id: "/dirigente/socios/";
-      path: "/";
-      fullPath: "/dirigente/socios/";
-      preLoaderRoute: typeof DirigenteSociosIndexRouteImport;
-      parentRoute: typeof DirigenteSociosRoute;
-    };
-    "/dirigente/socios/$id": {
-      id: "/dirigente/socios/$id";
-      path: "/$id";
-      fullPath: "/dirigente/socios/$id";
-      preLoaderRoute: typeof DirigenteSociosIdRouteImport;
-      parentRoute: typeof DirigenteSociosRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avisos': {
+      id: '/avisos'
+      path: '/avisos'
+      fullPath: '/avisos'
+      preLoaderRoute: typeof AvisosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/club': {
+      id: '/club'
+      path: '/club'
+      fullPath: '/club'
+      preLoaderRoute: typeof ClubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dirigente': {
+      id: '/dirigente'
+      path: '/dirigente'
+      fullPath: '/dirigente'
+      preLoaderRoute: typeof DirigenteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jugador': {
+      id: '/jugador'
+      path: '/jugador'
+      fullPath: '/jugador'
+      preLoaderRoute: typeof JugadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagos': {
+      id: '/pagos'
+      path: '/pagos'
+      fullPath: '/pagos'
+      preLoaderRoute: typeof PagosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dirigente/': {
+      id: '/dirigente/'
+      path: '/'
+      fullPath: '/dirigente/'
+      preLoaderRoute: typeof DirigenteIndexRouteImport
+      parentRoute: typeof DirigenteRoute
+    }
+    '/dirigente/eventos': {
+      id: '/dirigente/eventos'
+      path: '/eventos'
+      fullPath: '/dirigente/eventos'
+      preLoaderRoute: typeof DirigenteEventosRouteImport
+      parentRoute: typeof DirigenteRoute
+    }
+    '/dirigente/mas': {
+      id: '/dirigente/mas'
+      path: '/mas'
+      fullPath: '/dirigente/mas'
+      preLoaderRoute: typeof DirigenteMasRouteImport
+      parentRoute: typeof DirigenteRoute
+    }
+    '/dirigente/pagos': {
+      id: '/dirigente/pagos'
+      path: '/pagos'
+      fullPath: '/dirigente/pagos'
+      preLoaderRoute: typeof DirigentePagosRouteImport
+      parentRoute: typeof DirigenteRoute
+    }
+    '/dirigente/socios': {
+      id: '/dirigente/socios'
+      path: '/socios'
+      fullPath: '/dirigente/socios'
+      preLoaderRoute: typeof DirigenteSociosRouteImport
+      parentRoute: typeof DirigenteRoute
+    }
+    '/dirigente/socios/': {
+      id: '/dirigente/socios/'
+      path: '/'
+      fullPath: '/dirigente/socios/'
+      preLoaderRoute: typeof DirigenteSociosIndexRouteImport
+      parentRoute: typeof DirigenteSociosRoute
+    }
+    '/dirigente/socios/$id': {
+      id: '/dirigente/socios/$id'
+      path: '/$id'
+      fullPath: '/dirigente/socios/$id'
+      preLoaderRoute: typeof DirigenteSociosIdRouteImport
+      parentRoute: typeof DirigenteSociosRoute
+    }
   }
 }
 
 interface DirigenteSociosRouteChildren {
-  DirigenteSociosIdRoute: typeof DirigenteSociosIdRoute;
-  DirigenteSociosIndexRoute: typeof DirigenteSociosIndexRoute;
+  DirigenteSociosIdRoute: typeof DirigenteSociosIdRoute
+  DirigenteSociosIndexRoute: typeof DirigenteSociosIndexRoute
 }
 
 const DirigenteSociosRouteChildren: DirigenteSociosRouteChildren = {
   DirigenteSociosIdRoute: DirigenteSociosIdRoute,
   DirigenteSociosIndexRoute: DirigenteSociosIndexRoute,
-};
+}
 
 const DirigenteSociosRouteWithChildren = DirigenteSociosRoute._addFileChildren(
   DirigenteSociosRouteChildren,
-);
+)
 
 interface DirigenteRouteChildren {
-  DirigenteEventosRoute: typeof DirigenteEventosRoute;
-  DirigenteMasRoute: typeof DirigenteMasRoute;
-  DirigentePagosRoute: typeof DirigentePagosRoute;
-  DirigenteSociosRoute: typeof DirigenteSociosRouteWithChildren;
-  DirigenteIndexRoute: typeof DirigenteIndexRoute;
+  DirigenteEventosRoute: typeof DirigenteEventosRoute
+  DirigenteMasRoute: typeof DirigenteMasRoute
+  DirigentePagosRoute: typeof DirigentePagosRoute
+  DirigenteSociosRoute: typeof DirigenteSociosRouteWithChildren
+  DirigenteIndexRoute: typeof DirigenteIndexRoute
 }
 
 const DirigenteRouteChildren: DirigenteRouteChildren = {
@@ -352,11 +352,11 @@ const DirigenteRouteChildren: DirigenteRouteChildren = {
   DirigentePagosRoute: DirigentePagosRoute,
   DirigenteSociosRoute: DirigenteSociosRouteWithChildren,
   DirigenteIndexRoute: DirigenteIndexRoute,
-};
+}
 
 const DirigenteRouteWithChildren = DirigenteRoute._addFileChildren(
   DirigenteRouteChildren,
-);
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -367,17 +367,17 @@ const rootRouteChildren: RootRouteChildren = {
   JugadorRoute: JugadorRoute,
   PagosRoute: PagosRoute,
   PerfilRoute: PerfilRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { startInstance } from "./start.ts";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

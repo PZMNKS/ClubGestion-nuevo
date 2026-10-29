@@ -10,6 +10,7 @@ type Props = {
   time: string;
   place: string;
   type?: EventType;
+  destinatarios?: string;
   rival?: string;
   status?: EventStatus;
   onClick?: () => void;
@@ -33,6 +34,10 @@ const statusLabels: Record<EventStatus, { label: string; cls: string }> = {
     label: "No asiste",
     cls: "bg-destructive-soft text-destructive",
   },
+  lesionado: {
+    label: "Lesionado",
+    cls: "bg-orange-100 text-orange-800",
+  },
 };
 
 export function EventCard({
@@ -43,6 +48,7 @@ export function EventCard({
   time,
   place,
   type = "entrenamiento",
+  destinatarios,
   rival,
   status,
   onClick,
@@ -85,8 +91,13 @@ export function EventCard({
         <p className="mt-1 flex items-center gap-1 text-xs font-normal text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" /> {place}
         </p>
-        {!compact && (rival || status) && (
-          <div className="mt-2 flex items-center gap-2">
+        {!compact && (destinatarios || rival || status) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {destinatarios && (
+              <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-secondary-foreground">
+                {destinatarios}
+              </span>
+            )}
             {rival && (
               <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                 <Users className="h-3 w-3" /> vs {rival}

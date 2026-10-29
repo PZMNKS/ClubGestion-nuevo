@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { pageHead } from "@/lib/page-head";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";

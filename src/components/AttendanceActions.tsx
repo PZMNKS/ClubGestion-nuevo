@@ -1,11 +1,11 @@
-import { Check, X } from "lucide-react";
-import { toast } from "sonner";
+import { Check, HeartPulse, X } from "lucide-react";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { getPrototype, updatePrototype } from "@/lib/prototype-state";
+import { setPlayerEventStatus } from "@/lib/prototype-state";
 import type { EventStatus } from "@/lib/mock-data";
 
 const base =
-  "rounded-xl border transition-all duration-150 active:scale-[0.97] active:shadow-none";
+  "rounded-xl border px-2 text-xs transition-all duration-150 active:scale-[0.97] active:shadow-none";
 const idle =
   "border-input bg-card text-foreground shadow-card hover:bg-secondary";
 
@@ -17,30 +17,23 @@ export function AttendanceActions({
   status: EventStatus;
 }) {
   function respond(next: EventStatus) {
-    updatePrototype({
-      events: getPrototype().events.map((e) =>
-        e.id === id ? { ...e, status: next } : e,
-      ),
-    });
+    setPlayerEventStatus(id, next);
     toast.success(
       next === "confirmado"
         ? "Asistencia confirmada"
-        : "Registrado: no vas a asistir",
+        : next === "lesionado"
+          ? "Registrado: baja por lesión"
+          : "Registrado: no vas a asistir",
       {
         action: {
           label: "Deshacer",
-          onClick: () =>
-            updatePrototype({
-              events: getPrototype().events.map((e) =>
-                e.id === id ? { ...e, status } : e,
-              ),
-            }),
+          onClick: () => setPlayerEventStatus(id, status),
         },
       },
     );
   }
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-3 gap-2">
       <Button
         aria-pressed={status === "confirmado"}
         onClick={() => respond("confirmado")}
@@ -54,6 +47,13 @@ export function AttendanceActions({
         className={`${base} ${status === "no-asiste" ? "border-transparent bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive hover:text-destructive-foreground" : idle}`}
       >
         <X /> No voy
+      </Button>
+      <Button
+        aria-pressed={status === "lesionado"}
+        onClick={() => respond("lesionado")}
+        className={`${base} ${status === "lesionado" ? "border-transparent bg-orange-600 text-white shadow-sm hover:bg-orange-600 hover:text-white" : idle}`}
+      >
+        <HeartPulse /> Lesionado
       </Button>
     </div>
   );

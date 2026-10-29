@@ -31,7 +31,8 @@ export const player = {
   },
 };
 
-export type EventStatus = "confirmado" | "pendiente" | "no-asiste";
+export type EventStatus =
+  "confirmado" | "pendiente" | "no-asiste" | "lesionado";
 export type EventType = "partido" | "entrenamiento" | "reunion" | "actividad";
 
 export const events: {
@@ -43,6 +44,7 @@ export const events: {
   monthLabel: string;
   time: string;
   place: string;
+  destinatarios?: string;
   rival?: string;
   status: EventStatus;
   called: boolean;
@@ -56,6 +58,7 @@ export const events: {
     monthLabel: "SÁB",
     time: "16:00 hs",
     place: "Cancha Principal",
+    destinatarios: "Primera Adulta",
     rival: "Unión Centro",
     status: "pendiente",
     called: true,
@@ -69,6 +72,7 @@ export const events: {
     monthLabel: "JUE",
     time: "19:30 hs",
     place: "Cancha Auxiliar",
+    destinatarios: "Primera Adulta",
     status: "confirmado",
     called: true,
   },
@@ -81,6 +85,7 @@ export const events: {
     monthLabel: "MAR",
     time: "19:30 hs",
     place: "Cancha Auxiliar",
+    destinatarios: "Sub-17",
     status: "pendiente",
     called: false,
   },
@@ -93,6 +98,7 @@ export const events: {
     monthLabel: "VIE",
     time: "20:00 hs",
     place: "Sede del Club",
+    destinatarios: "Todos",
     status: "pendiente",
     called: true,
   },
@@ -105,6 +111,7 @@ export const events: {
     monthLabel: "DOM",
     time: "11:00 hs",
     place: "Cancha Visitante",
+    destinatarios: "Femenino Adulto",
     rival: "Deportivo Norte",
     status: "pendiente",
     called: false,
@@ -118,6 +125,7 @@ export const events: {
     monthLabel: "DOM",
     time: "13:00 hs",
     place: "Sede del Club",
+    destinatarios: "Socios",
     status: "pendiente",
     called: false,
   },

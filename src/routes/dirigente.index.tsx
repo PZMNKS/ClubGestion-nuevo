@@ -211,8 +211,8 @@ function DirigenteHome() {
           label="Revisar pagos"
         />
         <QuickAction
-          to="/dirigente/mas"
-          search={{ tab: "comunicacion", new: 1 }}
+          to="/dirigente/eventos"
+          search={{ tab: "avisos", new: 1 }}
           icon={<Megaphone className="h-5 w-5" />}
           label="Publicar aviso"
         />
@@ -303,8 +303,8 @@ function DirigenteHome() {
       <DSectionTitle
         action={
           <Link
-            to="/dirigente/mas"
-            search={{ tab: "comunicacion" }}
+            to="/dirigente/eventos"
+            search={{ tab: "avisos" }}
             className="text-sm font-semibold text-primary"
           >
             Ver todos

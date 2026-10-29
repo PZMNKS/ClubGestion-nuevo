@@ -1,6 +1,6 @@
 import { pageHead } from "@/lib/page-head";
 import { FlowSheet, FlowActions } from "@/components/FlowSheet";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   usePrototype,
   getPrototype,

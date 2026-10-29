@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { CheckCircle2, AlertTriangle, Upload } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { AppShell, SectionTitle } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { FlowSheet, FlowActions } from "@/components/FlowSheet";
@@ -117,30 +117,49 @@ function PagosPage() {
                 Adjunta el comprobante de una transferencia ya realizada. No se
                 realizará ningún cobro.
               </p>
-              <label className="block text-sm font-semibold">
-                Comprobante (PDF o imagen)
-                <input
-                  className="mt-2 block w-full text-sm"
-                  type="file"
-                  accept="application/pdf,image/jpeg,image/png"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (
-                      f &&
-                      (!["application/pdf", "image/jpeg", "image/png"].includes(
-                        f.type,
-                      ) ||
-                        f.size > 10 * 1024 * 1024)
-                    ) {
-                      setFile(null);
-                      setError("Elige un PDF, JPG o PNG de hasta 10 MB.");
-                    } else {
-                      setFile(f ?? null);
-                      setError("");
-                    }
-                  }}
-                />
-              </label>
+              <div>
+                <p className="text-sm font-semibold">
+                  Comprobante (PDF o imagen)
+                </p>
+                <label className="group mt-2 flex min-h-12 w-full cursor-pointer select-none items-center justify-center gap-2 rounded-xl border border-primary bg-primary-soft px-4 py-3 text-sm font-bold text-primary shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-md active:translate-y-0 active:scale-[0.98] focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                  <Upload className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5" />
+                  <span>
+                    {file ? "Cambiar comprobante" : "Adjuntar comprobante"}
+                  </span>
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept="application/pdf,image/jpeg,image/png"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (
+                        f &&
+                        (![
+                          "application/pdf",
+                          "image/jpeg",
+                          "image/png",
+                        ].includes(f.type) ||
+                          f.size > 10 * 1024 * 1024)
+                      ) {
+                        setFile(null);
+                        setError("Elige un PDF, JPG o PNG de hasta 10 MB.");
+                      } else {
+                        setFile(f ?? null);
+                        setError("");
+                      }
+                    }}
+                  />
+                </label>
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  PDF, JPG o PNG de hasta 10 MB
+                </p>
+                {file && (
+                  <div className="mt-2 flex items-center gap-2 rounded-xl bg-success-soft px-3 py-2.5 text-xs font-semibold text-success">
+                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">{file.name}</span>
+                  </div>
+                )}
+              </div>
               {error && (
                 <p role="alert" className="text-sm text-destructive">
                   {error}

@@ -1,4 +1,4 @@
-import { Toaster } from "sonner";
+import { Toaster, toast as sonnerToast, useSonner } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -149,6 +149,20 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SingleToastGuard() {
+  const { toasts } = useSonner();
+
+  useEffect(() => {
+    if (toasts.length > 1) {
+      toasts.slice(1).forEach((t) => {
+        sonnerToast.dismiss(t.id);
+      });
+    }
+  }, [toasts]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -156,7 +170,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /><Toaster position="top-center" richColors closeButton /> breaks all child routes. */}
       <Outlet />
-      <Toaster position="top-center" richColors closeButton />
+      <SingleToastGuard />
+      <Toaster position="top-center" richColors closeButton visibleToasts={1} />
     </QueryClientProvider>
   );
 }

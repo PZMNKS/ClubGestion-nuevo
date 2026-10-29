@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DraggableBottomSheet } from "@/components/DraggableBottomSheet";
-import { X } from "lucide-react";
-import { useSocios, type EstadoAsistencia } from "@/lib/dirigente-data";
+import { FlowSheet, FlowActions } from "@/components/FlowSheet";
+import { Pencil, X } from "lucide-react";
+import {
+  resumenRegistros,
+  useSocios,
+  type EstadoAsistencia,
+} from "@/lib/dirigente-data";
 
 const grupos: { key: EstadoAsistencia; label: string; cls: string }[] = [
   {
@@ -15,9 +21,37 @@ const grupos: { key: EstadoAsistencia; label: string; cls: string }[] = [
     cls: "bg-destructive-soft text-destructive",
   },
   {
+    key: "lesionado",
+    label: "Lesionados",
+    cls: "bg-orange-100 text-orange-800",
+  },
+  {
     key: "sin-respuesta",
     label: "Sin responder",
     cls: "bg-warning-soft text-warning-foreground",
+  },
+];
+
+const opcionesEstado: { k: EstadoAsistencia; l: string; on: string }[] = [
+  {
+    k: "presente",
+    l: "Asistió",
+    on: "bg-success text-success-foreground hover:bg-success hover:text-success-foreground",
+  },
+  {
+    k: "ausente",
+    l: "No asistió",
+    on: "bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground",
+  },
+  {
+    k: "lesionado",
+    l: "Lesionado",
+    on: "bg-orange-600 text-white hover:bg-orange-600 hover:text-white",
+  },
+  {
+    k: "sin-respuesta",
+    l: "Sin responder",
+    on: "bg-warning text-warning-foreground hover:bg-warning hover:text-warning-foreground",
   },
 ];
 
@@ -26,11 +60,13 @@ export function AsistenciaListaSheet({
   subtitulo,
   registros,
   onClose,
+  onEdit,
 }: {
   titulo: string;
   subtitulo?: string;
   registros: Record<string, EstadoAsistencia>;
   onClose: () => void;
+  onEdit?: () => void;
 }) {
   const socios = useSocios();
   return (
@@ -46,6 +82,14 @@ export function AsistenciaListaSheet({
           <X className="h-5 w-5" />
         </Button>
       </div>
+      {onEdit && (
+        <Button
+          onClick={onEdit}
+          className="mt-4 flex w-full items-center justify-center gap-2 text-sm font-bold"
+        >
+          <Pencil className="h-4 w-4" /> Editar asistencia
+        </Button>
+      )}
       {grupos.map((g) => {
         const ids = Object.entries(registros)
           .filter(([, v]) => v === g.key)
@@ -94,5 +138,103 @@ export function AsistenciaListaSheet({
         );
       })}
     </DraggableBottomSheet>
+  );
+}
+
+export function EditarAsistenciaSheet({
+  titulo,
+  subtitulo,
+  registros,
+  categoria = "Todos",
+  onClose,
+  onSave,
+}: {
+  titulo: string;
+  subtitulo?: string;
+  registros: Record<string, EstadoAsistencia>;
+  categoria?: string;
+  onClose: () => void;
+  onSave: (registros: Record<string, EstadoAsistencia>) => void;
+}) {
+  const socios = useSocios();
+  const idsRegistrados = Object.keys(registros);
+  const jugadores = socios.filter(
+    (s) =>
+      s.rol === "jugador" &&
+      (idsRegistrados.includes(s.id) ||
+        categoria === "Todos" ||
+        s.categoria === categoria),
+  );
+  const [reg, setReg] = useState<Record<string, EstadoAsistencia>>(() => {
+    const init: Record<string, EstadoAsistencia> = {};
+    jugadores.forEach((j) => {
+      init[j.id] = registros[j.id] ?? "sin-respuesta";
+    });
+    return init;
+  });
+
+  const resumen = resumenRegistros(reg);
+
+  return (
+    <FlowSheet title={titulo} description={subtitulo} onClose={onClose}>
+      <div className="grid grid-cols-4 gap-1.5 text-center text-xs">
+        <div className="rounded-xl bg-success-soft p-2 text-success">
+          <p className="text-[10px] font-bold">Asistió</p>
+          <p className="text-base font-extrabold">{resumen.presentes}</p>
+        </div>
+        <div className="rounded-xl bg-destructive-soft p-2 text-destructive">
+          <p className="text-[10px] font-bold">No asist.</p>
+          <p className="text-base font-extrabold">{resumen.ausentes}</p>
+        </div>
+        <div className="rounded-xl bg-orange-100 p-2 text-orange-800">
+          <p className="text-[10px] font-bold">Lesionado</p>
+          <p className="text-base font-extrabold">{resumen.lesionados}</p>
+        </div>
+        <div className="rounded-xl bg-warning-soft p-2 text-warning-foreground">
+          <p className="text-[10px] font-bold">Sin resp.</p>
+          <p className="text-base font-extrabold">{resumen.sinRespuesta}</p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {jugadores.map((j) => {
+          const cur = reg[j.id] ?? "sin-respuesta";
+          return (
+            <div key={j.id} className="rounded-2xl bg-secondary p-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary">
+                  {j.foto}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{j.nombre}</p>
+                  <p className="text-xs text-muted-foreground">{j.categoria}</p>
+                </div>
+              </div>
+              <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+                {opcionesEstado.map((o) => (
+                  <Button
+                    variant="ghost"
+                    key={o.k}
+                    onClick={() => setReg((p) => ({ ...p, [j.id]: o.k }))}
+                    aria-pressed={cur === o.k}
+                    className={`rounded-xl px-2 py-1.5 text-xs font-bold transition ${
+                      cur === o.k ? o.on : "bg-card text-secondary-foreground"
+                    }`}
+                  >
+                    {o.l}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <FlowActions
+        onCancel={onClose}
+        label="Guardar asistencia"
+        onSave={() => onSave(reg)}
+      />
+    </FlowSheet>
   );
 }

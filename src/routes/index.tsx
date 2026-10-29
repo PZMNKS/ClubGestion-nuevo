@@ -157,32 +157,38 @@ function Home() {
           {upcoming[0]?.monthLabel} {upcoming[0]?.dayLabel} ·{" "}
           {upcoming[0]?.time}
         </p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {(["confirmado", "pendiente", "no-asiste"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() =>
-                setEvts((prev) =>
-                  prev.map((e, i) => (i === 0 ? { ...e, status: s } : e)),
-                )
-              }
-              className={`rounded-xl px-2 py-2 text-xs font-semibold transition ${
-                evts[0]?.status === s
-                  ? s === "confirmado"
-                    ? "bg-success text-success-foreground"
-                    : s === "no-asiste"
-                      ? "bg-destructive text-destructive-foreground"
-                      : "bg-warning text-warning-foreground"
-                  : "bg-secondary text-secondary-foreground"
-              }`}
-            >
-              {s === "confirmado"
-                ? "Asistiré"
-                : s === "no-asiste"
-                  ? "No asisto"
-                  : "Pendiente"}
-            </button>
-          ))}
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {(["confirmado", "no-asiste", "lesionado", "pendiente"] as const).map(
+            (s) => (
+              <button
+                key={s}
+                onClick={() =>
+                  setEvts((prev) =>
+                    prev.map((e, i) => (i === 0 ? { ...e, status: s } : e)),
+                  )
+                }
+                className={`rounded-xl px-2 py-2 text-xs font-semibold transition ${
+                  evts[0]?.status === s
+                    ? s === "confirmado"
+                      ? "bg-success text-success-foreground"
+                      : s === "no-asiste"
+                        ? "bg-destructive text-destructive-foreground"
+                        : s === "lesionado"
+                          ? "bg-orange-600 text-white"
+                          : "bg-warning text-warning-foreground"
+                    : "bg-secondary text-secondary-foreground"
+                }`}
+              >
+                {s === "confirmado"
+                  ? "Asistiré"
+                  : s === "no-asiste"
+                    ? "No asisto"
+                    : s === "lesionado"
+                      ? "Lesionado"
+                      : "Pendiente"}
+              </button>
+            ),
+          )}
         </div>
       </div>
     </AppShell>

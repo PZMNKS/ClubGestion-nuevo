@@ -3,30 +3,36 @@ import {
   usePrototype,
   getPrototype,
   updatePrototype,
+  resolveConvocatoriaEvento,
+  saveConvocatoriaEvento,
 } from "@/lib/prototype-state";
-import { FlowSheet } from "@/components/FlowSheet";
+import { FlowSheet, FlowActions } from "@/components/FlowSheet";
 import { DraggableBottomSheet } from "@/components/DraggableBottomSheet";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Plus,
-  X,
   Send,
   Users,
   ClipboardList,
   ChevronRight,
+  Megaphone,
 } from "lucide-react";
-import { AsistenciaListaSheet } from "@/components/AsistenciaListaSheet";
+import {
+  AsistenciaListaSheet,
+  EditarAsistenciaSheet,
+} from "@/components/AsistenciaListaSheet";
 import {
   useAsistencias,
   addAsistencia,
+  updateAsistencia,
   useSocios,
   resumenRegistros,
-  convocatoriaEvento,
   type EstadoAsistencia,
   type SesionAsistencia,
+  type AvisoDirigente,
 } from "@/lib/dirigente-data";
 import { DirigenteShell, DSectionTitle } from "@/components/DirigenteShell";
 import { EventCard } from "@/components/EventCard";
@@ -35,8 +41,8 @@ import { events as initialEvents, type EventType } from "@/lib/mock-data";
 export const Route = createFileRoute("/dirigente/eventos")({
   head: () =>
     pageHead(
-      "Eventos y asistencia del club",
-      "Organiza eventos, convocatorias y registros manuales de asistencia.",
+      "Eventos, asistencia y avisos del club",
+      "Organiza eventos, convocatorias, registros de asistencia y avisos del club.",
     ),
   validateSearch: (
     s: Record<string, unknown>,
@@ -47,32 +53,71 @@ export const Route = createFileRoute("/dirigente/eventos")({
   component: EventosDirigente,
 });
 
+const DESTINATARIOS_OPTIONS = [
+  "Todos",
+  "Primera Adulta",
+  "Femenino Adulto",
+  "Sub-17",
+  "Socios",
+  "Directiva",
+] as const;
+
+type EventosTab = "eventos" | "asistencia" | "avisos";
+
+function resolveEventosTab(tab?: string): EventosTab {
+  if (tab === "asistencia") return "asistencia";
+  if (tab === "avisos" || tab === "comunicacion") return "avisos";
+  return "eventos";
+}
+
 function EventosDirigente() {
-  const { events } = usePrototype();
+  const { events, convocatorias } = usePrototype();
+  useSocios();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
   const selected = events.find((e) => e.id === selectedId);
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [tab, setTab] = useState<"eventos" | "asistencia">(
-    search.tab === "asistencia" ? "asistencia" : "eventos",
+  const isInitialAvisoTab =
+    search.tab === "avisos" || search.tab === "comunicacion";
+  const isInitialAsistenciaTab = search.tab === "asistencia";
+  const [tab, setTab] = useState<EventosTab>(() =>
+    resolveEventosTab(search.tab),
   );
+  const [showForm, setShowForm] = useState(
+    Boolean(search.new) && !isInitialAvisoTab && !isInitialAsistenciaTab,
+  );
+  const [showNewAsistencia, setShowNewAsistencia] = useState(
+    Boolean(search.new) && isInitialAsistenciaTab,
+  );
+  const [openNewAviso, setOpenNewAviso] = useState(
+    Boolean(search.new) && isInitialAvisoTab,
+  );
+  const [avisoInitialDest, setAvisoInitialDest] = useState("Todos");
   const [showConv, setShowConv] = useState(false);
 
   useEffect(() => {
-    if (search.tab === "asistencia") setTab("asistencia");
-    if (search.new) setShowForm(true);
-    if (search.new || search.tab) navigate({ search: {}, replace: true });
+    const isAviso = search.tab === "avisos" || search.tab === "comunicacion";
+    const isAsistencia = search.tab === "asistencia";
+    if (search.tab) {
+      setTab(resolveEventosTab(search.tab));
+    }
+    if (search.new) {
+      if (isAviso) {
+        setOpenNewAviso(true);
+      } else if (isAsistencia) {
+        setShowNewAsistencia(true);
+      } else {
+        setShowForm(true);
+      }
+    }
+    if (search.new || search.tab) {
+      navigate({ search: {}, replace: true });
+    }
   }, [search.new, search.tab, navigate]);
 
-  const conv = selected ? convocatoriaEvento(selected.id, selected.called) : {};
-  if (selected)
-    conv.s1 =
-      selected.status === "confirmado"
-        ? "presente"
-        : selected.status === "no-asiste"
-          ? "ausente"
-          : "sin-respuesta";
+  const conv = selected
+    ? resolveConvocatoriaEvento(selected, convocatorias[selected.id])
+    : {};
   const convR = resumenRegistros(conv);
 
   return (
@@ -81,19 +126,29 @@ function EventosDirigente() {
         <div>
           <h1 className="text-2xl font-extrabold">Eventos</h1>
           <p className="text-sm text-muted-foreground">
-            Planifica y convoca al equipo.
+            Planifica, convoca y comunica al equipo.
           </p>
         </div>
-        <Button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-1 px-3 font-bold"
-        >
-          <Plus className="h-4 w-4" /> Crear
-        </Button>
+        {tab === "eventos" && (
+          <Button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-1 px-3 font-bold"
+          >
+            <Plus className="h-4 w-4" /> Crear
+          </Button>
+        )}
+        {tab === "asistencia" && (
+          <Button
+            onClick={() => setShowNewAsistencia(true)}
+            className="flex items-center gap-1 px-3 font-bold"
+          >
+            <ClipboardList className="h-4 w-4" /> Registrar asistencia
+          </Button>
+        )}
       </div>
 
       <div className="mt-4 inline-flex rounded-full bg-secondary p-1">
-        {(["eventos", "asistencia"] as const).map((v) => (
+        {(["eventos", "asistencia", "avisos"] as const).map((v) => (
           <Button
             variant="ghost"
             key={v}
@@ -110,7 +165,7 @@ function EventosDirigente() {
         ))}
       </div>
 
-      {tab === "eventos" ? (
+      {tab === "eventos" && (
         <>
           <DSectionTitle>Próximos</DSectionTitle>
           <div className="space-y-3">
@@ -123,26 +178,47 @@ function EventosDirigente() {
             ))}
           </div>
         </>
-      ) : (
-        <AsistenciaSection />
+      )}
+      {tab === "asistencia" && (
+        <AsistenciaSection onOpenNew={() => setShowNewAsistencia(true)} />
+      )}
+      {tab === "avisos" && (
+        <AvisosSection
+          openNew={openNewAviso}
+          initialDestinatarios={avisoInitialDest}
+          onConsumeOpenNew={() => {
+            setOpenNewAviso(false);
+            setAvisoInitialDest("Todos");
+          }}
+        />
       )}
 
-      {selected && (
+      {selected && !showConv && (
         <DraggableBottomSheet
           onClose={() => {
             setSelectedId(null);
             setShowConv(false);
           }}
         >
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-            {selected.type}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+              {selected.type}
+            </p>
+            {selected.destinatarios && (
+              <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-bold text-secondary-foreground">
+                {selected.destinatarios}
+              </span>
+            )}
+          </div>
           <h2 className="mt-1 text-2xl font-extrabold">{selected.title}</h2>
           <div className="mt-3 space-y-1 text-sm text-muted-foreground">
             <p>
               📅 {selected.monthLabel} {selected.dayLabel} · {selected.time}
             </p>
             <p>📍 {selected.place}</p>
+            {selected.destinatarios && (
+              <p>👥 Destinatarios: {selected.destinatarios}</p>
+            )}
             {selected.rival && <p>🆚 {selected.rival}</p>}
           </div>
 
@@ -150,15 +226,15 @@ function EventosDirigente() {
           <Button
             variant="ghost"
             onClick={() => setShowConv(true)}
-            className="block w-full rounded-2xl bg-secondary p-3 text-left text-sm transition active:scale-[0.98]"
+            className="block h-auto w-full rounded-2xl bg-secondary p-3 text-left text-sm transition active:scale-[0.98]"
           >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 font-semibold">
-                <Users className="h-4 w-4" /> Convocados
+                <Users className="h-4 w-4" /> Convocados ({convR.presentes}/
+                {convR.total})
               </span>
-              <span className="flex items-center gap-1 font-bold text-primary">
-                {convR.presentes}/{convR.total}{" "}
-                <ChevronRight className="h-4 w-4" />
+              <span className="flex items-center gap-1 text-xs font-bold text-primary">
+                Editar asistencia <ChevronRight className="h-4 w-4" />
               </span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
@@ -168,31 +244,33 @@ function EventosDirigente() {
                 tone="ok"
               />
               <Mini
-                label="Sin responder"
-                value={String(convR.sinRespuesta)}
-                tone="warn"
-              />
-              <Mini
                 label="No asisten"
                 value={String(convR.ausentes)}
                 tone="bad"
               />
               <Mini
-                label="Convocados"
-                value={String(convR.total)}
-                tone="default"
+                label="Lesionados"
+                value={String(convR.lesionados)}
+                tone="injured"
+              />
+              <Mini
+                label="Sin responder"
+                value={String(convR.sinRespuesta)}
+                tone="warn"
               />
             </div>
           </Button>
 
           <Button
-            onClick={() =>
-              navigate({
-                to: "/dirigente/mas",
-                search: { tab: "comunicacion", new: 1 },
-              })
-            }
-            className="mt-4 flex w-full items-center justify-center gap-2    text-sm font-bold "
+            onClick={() => {
+              const dest = selected.destinatarios ?? "Todos";
+              setSelectedId(null);
+              setShowConv(false);
+              setAvisoInitialDest(dest);
+              setTab("avisos");
+              setOpenNewAviso(true);
+            }}
+            className="mt-4 flex w-full items-center justify-center gap-2 text-sm font-bold"
           >
             <Send className="h-4 w-4" /> Enviar aviso a convocados
           </Button>
@@ -200,11 +278,16 @@ function EventosDirigente() {
       )}
 
       {selected && showConv && (
-        <AsistenciaListaSheet
+        <EditarAsistenciaSheet
           titulo={`Convocatoria · ${selected.title}`}
           subtitulo={`${selected.monthLabel} ${selected.dayLabel} · ${selected.time}`}
           registros={conv}
           onClose={() => setShowConv(false)}
+          onSave={(nuevos) => {
+            saveConvocatoriaEvento(selected.id, nuevos);
+            toast.success("Asistencia de la convocatoria actualizada");
+            setShowConv(false);
+          }}
         />
       )}
 
@@ -218,7 +301,166 @@ function EventosDirigente() {
           }}
         />
       )}
+
+      {showNewAsistencia && (
+        <RegistrarAsistenciaSheet onClose={() => setShowNewAsistencia(false)} />
+      )}
     </DirigenteShell>
+  );
+}
+
+function AvisosSection({
+  openNew = false,
+  initialDestinatarios = "Todos",
+  onConsumeOpenNew,
+}: {
+  openNew?: boolean;
+  initialDestinatarios?: string;
+  onConsumeOpenNew?: () => void;
+}) {
+  const { avisos } = usePrototype();
+  const setAvisos = (fn: (items: AvisoDirigente[]) => AvisoDirigente[]) =>
+    updatePrototype({ avisos: fn(getPrototype().avisos) });
+  const [show, setShow] = useState(openNew);
+  const [defaultDest, setDefaultDest] = useState(initialDestinatarios);
+
+  useEffect(() => {
+    if (openNew) {
+      setDefaultDest(initialDestinatarios);
+      setShow(true);
+      onConsumeOpenNew?.();
+    }
+  }, [openNew, initialDestinatarios, onConsumeOpenNew]);
+
+  return (
+    <>
+      <div className="mt-5 flex items-center justify-between">
+        <p className="text-sm font-semibold text-muted-foreground">
+          {avisos.length} avisos publicados
+        </p>
+        <Button
+          onClick={() => {
+            setDefaultDest("Todos");
+            setShow(true);
+          }}
+          className="flex items-center gap-1 px-3 font-bold"
+        >
+          <Plus className="h-3.5 w-3.5" /> Nuevo
+        </Button>
+      </div>
+
+      <div className="mt-3 space-y-3">
+        {avisos.map((a) => (
+          <article
+            key={a.id}
+            className="rounded-2xl bg-card p-4 shadow-[var(--shadow-card)]"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Megaphone className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold">{a.titulo}</p>
+                <p className="text-xs text-muted-foreground">
+                  {a.autor} · {a.fecha}
+                </p>
+              </div>
+              <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-secondary-foreground">
+                {a.destinatarios}
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">{a.cuerpo}</p>
+          </article>
+        ))}
+      </div>
+
+      {show && (
+        <NewAvisoSheet
+          defaultDestinatarios={defaultDest}
+          onClose={() => setShow(false)}
+          onSave={(a) => {
+            setAvisos((p) => [a, ...p]);
+            toast.success("Aviso publicado en esta sesión");
+            setShow(false);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function NewAvisoSheet({
+  defaultDestinatarios = "Todos",
+  onClose,
+  onSave,
+}: {
+  defaultDestinatarios?: string;
+  onClose: () => void;
+  onSave: (a: AvisoDirigente) => void;
+}) {
+  const [titulo, setTitulo] = useState("");
+  const [cuerpo, setCuerpo] = useState("");
+  const [destinatarios, setDestinatarios] = useState(defaultDestinatarios);
+
+  return (
+    <FlowSheet title="Nuevo aviso" onClose={onClose}>
+      <div className="mt-4 space-y-3">
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
+            Título
+          </span>
+          <input
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
+            placeholder="Ej: Convocatoria sábado"
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
+            Destinatarios
+          </span>
+          <select
+            value={destinatarios}
+            onChange={(e) => setDestinatarios(e.target.value)}
+            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
+          >
+            {DESTINATARIOS_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-muted-foreground">
+            Mensaje
+          </span>
+          <textarea
+            value={cuerpo}
+            onChange={(e) => setCuerpo(e.target.value)}
+            rows={4}
+            className="w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none"
+            placeholder="Escribe el mensaje..."
+          />
+        </label>
+      </div>
+      <FlowActions
+        onCancel={onClose}
+        disabled={!titulo.trim() || !cuerpo.trim()}
+        label="Publicar aviso"
+        onSave={() =>
+          onSave({
+            id: `av${Date.now()}`,
+            titulo,
+            cuerpo,
+            destinatarios,
+            fecha: "ahora",
+            autor: "Tú",
+          })
+        }
+      />
+    </FlowSheet>
   );
 }
 
@@ -229,12 +471,13 @@ function Mini({
 }: {
   label: string;
   value: string;
-  tone: "ok" | "warn" | "bad" | "default";
+  tone: "ok" | "warn" | "bad" | "injured" | "default";
 }) {
   const cls = {
     ok: "bg-success-soft text-success",
     warn: "bg-warning-soft text-warning-foreground",
     bad: "bg-destructive-soft text-destructive",
+    injured: "bg-orange-100 text-orange-800",
     default: "bg-card text-foreground",
   }[tone];
   return (
@@ -256,10 +499,14 @@ function NewEventSheet({
 }) {
   const [titulo, setTitulo] = useState("");
   const [tipo, setTipo] = useState<EventType>("entrenamiento");
+  const [destinatarios, setDestinatarios] = useState("Todos");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("19:30");
   const [lugar, setLugar] = useState("");
   const [obs, setObs] = useState("");
+
+  const inputCls =
+    "w-full rounded-xl bg-secondary px-3 py-2.5 text-sm outline-none";
 
   return (
     <FlowSheet title="Nuevo evento" onClose={onClose}>
@@ -268,7 +515,7 @@ function NewEventSheet({
           <input
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
-            className="fld"
+            className={inputCls}
             placeholder="Ej: Entrenamiento"
           />
         </L>
@@ -276,12 +523,25 @@ function NewEventSheet({
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as EventType)}
-            className="fld"
+            className={inputCls}
           >
             <option value="entrenamiento">Entrenamiento</option>
             <option value="partido">Partido</option>
             <option value="reunion">Reunión</option>
             <option value="actividad">Actividad</option>
+          </select>
+        </L>
+        <L label="Destinatarios">
+          <select
+            value={destinatarios}
+            onChange={(e) => setDestinatarios(e.target.value)}
+            className={inputCls}
+          >
+            {DESTINATARIOS_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
           </select>
         </L>
         <div className="grid grid-cols-2 gap-3">
@@ -290,7 +550,7 @@ function NewEventSheet({
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="fld"
+              className={inputCls}
             />
           </L>
           <L label="Hora">
@@ -298,7 +558,7 @@ function NewEventSheet({
               type="time"
               value={hora}
               onChange={(e) => setHora(e.target.value)}
-              className="fld"
+              className={inputCls}
             />
           </L>
         </div>
@@ -306,7 +566,7 @@ function NewEventSheet({
           <input
             value={lugar}
             onChange={(e) => setLugar(e.target.value)}
-            className="fld"
+            className={inputCls}
             placeholder="Ej: Cancha municipal"
           />
         </L>
@@ -315,52 +575,46 @@ function NewEventSheet({
             value={obs}
             onChange={(e) => setObs(e.target.value)}
             rows={2}
-            className="fld"
+            className={inputCls}
             placeholder="Notas opcionales..."
           />
         </L>
       </div>
-      <div className="flow-actions">
-        <Button variant="secondary" className="w-full" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button
-          disabled={!titulo.trim() || !fecha || !hora || !lugar.trim()}
-          onClick={() => {
-            const d = new Date(fecha + "T00:00:00");
-            const months = [
-              "ENE",
-              "FEB",
-              "MAR",
-              "ABR",
-              "MAY",
-              "JUN",
-              "JUL",
-              "AGO",
-              "SEP",
-              "OCT",
-              "NOV",
-              "DIC",
-            ];
-            onSave({
-              id: `e${Date.now()}`,
-              type: tipo,
-              title: titulo,
-              date: fecha,
-              dayLabel: String(d.getDate()).padStart(2, "0"),
-              monthLabel: months[d.getMonth()],
-              time: `${hora} hs`,
-              place: lugar,
-              status: "pendiente",
-              called: false,
-            });
-          }}
-          className="w-full text-sm font-bold disabled:opacity-50"
-        >
-          Crear evento
-        </Button>
-      </div>
-      <style>{`.fld{width:100%;border-radius:0.75rem;background:var(--secondary);padding:0.625rem 0.875rem;font-size:0.875rem;outline:none}`}</style>
+      <FlowActions
+        onCancel={onClose}
+        disabled={!titulo.trim() || !fecha || !hora || !lugar.trim()}
+        label="Crear evento"
+        onSave={() => {
+          const d = new Date(fecha + "T00:00:00");
+          const months = [
+            "ENE",
+            "FEB",
+            "MAR",
+            "ABR",
+            "MAY",
+            "JUN",
+            "JUL",
+            "AGO",
+            "SEP",
+            "OCT",
+            "NOV",
+            "DIC",
+          ];
+          onSave({
+            id: `e${Date.now()}`,
+            type: tipo,
+            title: titulo,
+            date: fecha,
+            dayLabel: String(d.getDate()).padStart(2, "0"),
+            monthLabel: months[d.getMonth()],
+            time: `${hora} hs`,
+            place: lugar,
+            destinatarios,
+            status: "pendiente",
+            called: false,
+          });
+        }}
+      />
     </FlowSheet>
   );
 }
@@ -376,10 +630,10 @@ function L({ label, children }: { label: string; children: React.ReactNode }) {
   );
 }
 
-function AsistenciaSection() {
+function AsistenciaSection({ onOpenNew }: { onOpenNew: () => void }) {
   const sesiones = useAsistencias();
   const [openId, setOpenId] = useState<string | null>(null);
-  const [showNew, setShowNew] = useState(false);
+  const [editing, setEditing] = useState(false);
   const open = sesiones.find((s) => s.id === openId);
   const pcts = sesiones.map((s) => {
     const r = resumenRegistros(s.registros);
@@ -414,8 +668,11 @@ function AsistenciaSection() {
             <Button
               variant="ghost"
               key={a.id}
-              onClick={() => setOpenId(a.id)}
-              className="block w-full rounded-2xl bg-card p-4 text-left shadow-[var(--shadow-card)] transition active:scale-[0.98]"
+              onClick={() => {
+                setEditing(false);
+                setOpenId(a.id);
+              }}
+              className="block h-auto w-full rounded-2xl bg-card p-4 text-left shadow-[var(--shadow-card)] transition active:scale-[0.98]"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success-soft text-success">
@@ -447,23 +704,32 @@ function AsistenciaSection() {
         })}
       </div>
 
-      <Button
-        onClick={() => setShowNew(true)}
-        className="mt-5 w-full text-sm font-bold"
-      >
+      <Button onClick={onOpenNew} className="mt-5 w-full text-sm font-bold">
         Registrar asistencia
       </Button>
 
-      {open && (
+      {open && !editing && (
         <AsistenciaListaSheet
           titulo={open.titulo}
           subtitulo={`${open.categoria} · ${open.fecha}`}
           registros={open.registros}
+          onEdit={() => setEditing(true)}
           onClose={() => setOpenId(null)}
         />
       )}
-      {showNew && (
-        <RegistrarAsistenciaSheet onClose={() => setShowNew(false)} />
+      {open && editing && (
+        <EditarAsistenciaSheet
+          titulo={`Editar · ${open.titulo}`}
+          subtitulo={`${open.categoria} · ${open.fecha}`}
+          registros={open.registros}
+          categoria={open.categoria}
+          onClose={() => setEditing(false)}
+          onSave={(nuevos) => {
+            updateAsistencia(open.id, nuevos);
+            toast.success("Asistencia actualizada");
+            setEditing(false);
+          }}
+        />
       )}
     </>
   );
@@ -506,16 +772,25 @@ function RegistrarAsistenciaSheet({ onClose }: { onClose: () => void }) {
     (j) => categoria === "Todos" || j.categoria === categoria,
   );
   const opts: { k: EstadoAsistencia; l: string; on: string }[] = [
-    { k: "presente", l: "Asistió", on: "bg-success text-success-foreground" },
+    {
+      k: "presente",
+      l: "Asistió",
+      on: "bg-success text-success-foreground hover:bg-success hover:text-success-foreground",
+    },
     {
       k: "ausente",
       l: "No asistió",
-      on: "bg-destructive text-destructive-foreground",
+      on: "bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground",
+    },
+    {
+      k: "lesionado",
+      l: "Lesionado",
+      on: "bg-orange-600 text-white hover:bg-orange-600 hover:text-white",
     },
     {
       k: "sin-respuesta",
-      l: "Sin resp.",
-      on: "bg-warning text-warning-foreground",
+      l: "Sin responder",
+      on: "bg-warning text-warning-foreground hover:bg-warning hover:text-warning-foreground",
     },
   ];
 
@@ -595,14 +870,16 @@ function RegistrarAsistenciaSheet({ onClose }: { onClose: () => void }) {
             <div key={j.id} className="rounded-2xl bg-secondary p-3">
               <p className="text-sm font-semibold">{j.nombre}</p>
               <p className="text-xs text-muted-foreground">{j.categoria}</p>
-              <div className="mt-2 grid grid-cols-3 gap-1.5">
+              <div className="mt-2 grid grid-cols-2 gap-1.5">
                 {opts.map((o) => (
                   <Button
                     variant="ghost"
                     key={o.k}
                     onClick={() => setReg((p) => ({ ...p, [j.id]: o.k }))}
                     aria-pressed={cur === o.k}
-                    className={`rounded-xl px-1 py-1.5 text-xs font-bold transition ${cur === o.k ? o.on : "bg-card text-secondary-foreground"}`}
+                    className={`rounded-xl px-2 py-1.5 text-xs font-bold transition ${
+                      cur === o.k ? o.on : "bg-card text-secondary-foreground"
+                    }`}
                   >
                     {o.l}
                   </Button>
@@ -613,17 +890,12 @@ function RegistrarAsistenciaSheet({ onClose }: { onClose: () => void }) {
         })}
       </div>
 
-      <Button variant="secondary" className="mt-4 w-full" onClick={onClose}>
-        Cancelar
-      </Button>
-      <Button
+      <FlowActions
+        onCancel={onClose}
         disabled={!titulo.trim() || !fecha || lista.length === 0}
-        onClick={guardar}
-        className="mt-5 w-full    text-sm font-bold  disabled:opacity-50"
-      >
-        Guardar asistencia
-      </Button>
-      <style>{`.fld{width:100%;border-radius:0.75rem;background:var(--secondary);padding:0.625rem 0.875rem;font-size:0.875rem;outline:none}`}</style>
+        label="Guardar asistencia"
+        onSave={guardar}
+      />
     </FlowSheet>
   );
 }

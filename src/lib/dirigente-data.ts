@@ -433,7 +433,8 @@ export function useSocios(): Socio[] {
 }
 
 // ---------------- Asistencias store ----------------
-export type EstadoAsistencia = "presente" | "ausente" | "sin-respuesta";
+export type EstadoAsistencia =
+  "presente" | "ausente" | "lesionado" | "sin-respuesta";
 
 export type SesionAsistencia = AsistenciaSesion & {
   tipo: string;
@@ -479,6 +480,7 @@ export function resumenRegistros(r: Record<string, EstadoAsistencia>) {
   return {
     presentes: v.filter((x) => x === "presente").length,
     ausentes: v.filter((x) => x === "ausente").length,
+    lesionados: v.filter((x) => x === "lesionado").length,
     sinRespuesta: v.filter((x) => x === "sin-respuesta").length,
     total: v.length,
   };
@@ -490,7 +492,7 @@ export function convocatoriaEvento(
 ): Record<string, EstadoAsistencia> {
   const r: Record<string, EstadoAsistencia> = {};
   const seed = eventId.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  socios
+  getSocios()
     .filter((s) => s.rol === "jugador")
     .forEach((s, i) => {
       r[s.id] = called ? _ciclo[(i + seed) % _ciclo.length] : "sin-respuesta";
@@ -505,6 +507,24 @@ const _sesL = new Set<() => void>();
 
 export function addAsistencia(s: SesionAsistencia) {
   _ses = [s, ..._ses];
+  try {
+    window.localStorage.setItem(AS_KEY, JSON.stringify(_ses));
+  } catch {
+    /* ignore */
+  }
+  for (const l of _sesL) l();
+}
+
+export function updateAsistencia(
+  id: string,
+  registros: Record<string, EstadoAsistencia>,
+) {
+  const r = resumenRegistros(registros);
+  _ses = _ses.map((s) =>
+    s.id === id
+      ? { ...s, registros, presentes: r.presentes, total: r.total }
+      : s,
+  );
   try {
     window.localStorage.setItem(AS_KEY, JSON.stringify(_ses));
   } catch {
